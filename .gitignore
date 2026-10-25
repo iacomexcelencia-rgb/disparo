@@ -1,0 +1,46 @@
+# Dependencies and generated builds
+node_modules/
+dist/
+release/
+coverage/
+test-results/
+
+# Private local data and WhatsApp profiles
+.data/
+.wwebjs_auth/
+.wwebjs_cache/
+sessions/
+backups/
+ai-secrets.json
+DevToolsActivePort
+instance.lock
+
+# Local settings, credentials and editor metadata
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+.agents/
+.codex/
+.aws/
+.ssh/
+.npmrc
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# Distributables belong in GitHub Releases
+*.exe
+*.asar
+*.zip
+*.7z
+*.tgz
+
+# Private subscription edition and isolated publication checkout
+subscription/
+public-release/

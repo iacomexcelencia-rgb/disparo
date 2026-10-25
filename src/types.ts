@@ -1,0 +1,160 @@
+export type Timing = {
+  intervalSeconds: number;
+  hourlyLimit: number;
+  dailyLimit: number;
+  typingSeconds: number;
+};
+export type Settings = Timing & { country: string };
+export type Contact = {
+  id: string;
+  name: string;
+  phone: string;
+  company: string;
+  listIds: string[];
+  fields: Record<string, string>;
+  optedOut: boolean;
+};
+export type List = { id: string; name: string; color: string };
+export type Account = {
+  id: string;
+  name: string;
+  status: string;
+  phone?: string;
+  qr?: string;
+  error?: string;
+  progress?: string;
+};
+export type Attachment = { id: string; name: string; size: number; mimetype: string };
+export type Recipient = {
+  id: string;
+  contactId?: string;
+  name: string;
+  address: string;
+  body: string;
+  type: string;
+  status: string;
+  error?: string;
+  sentAt?: string;
+  attemptedAt?: string;
+  finishedAt?: string;
+  ack?: number;
+  expectedMessages?: number;
+  messageIds?: string[];
+  messageAcks?: Record<string, number>;
+  listSnapshot?: List[];
+  listAttribution?: string;
+  reply?: { firstAt: string; lastAt: string; count: number };
+  campaignId?: string;
+  campaignName?: string;
+};
+export type DispatchStats = {
+  total: number;
+  pending: number;
+  sending: number;
+  confirming: number;
+  sent: number;
+  delivered: number;
+  read: number;
+  failed: number;
+  uncertain: number;
+  responded: number;
+  noReply: number;
+  responseEligible: number;
+  responseRate: number;
+  replies: number;
+  messagesConfirmed: number;
+  processed: number;
+};
+export type Campaign = {
+  id: string;
+  name: string;
+  accountId: string;
+  template: string;
+  attachmentIds: string[];
+  timing: Timing;
+  status: string;
+  createdAt: string;
+  finishedAt?: string;
+  scheduledAt: string | null;
+  approvedAt: string | null;
+  nextAt: string | null;
+  warnings: string[];
+  error?: string;
+  counts: Record<string, number>;
+  total: number;
+  stats?: DispatchStats;
+};
+export type CampaignDetail = Campaign & { recipients: Recipient[] };
+export type WorkspaceView = 'campaigns' | 'lists';
+export type WorkspaceColumn = { id: string; name: string; color: string; statuses: string[] };
+export type WorkspaceBoard = {
+  id: string;
+  name: string;
+  columns: WorkspaceColumn[];
+  createdAt: string;
+  placements: Record<WorkspaceView, Record<string, { columnId: string; status: string }>>;
+};
+export type WorkspaceCampaign = Campaign & { stats: DispatchStats; listNames: string[] };
+export type WorkspaceList = List & {
+  status: string;
+  statusCounts: Record<string, number>;
+  campaigns: {
+    id: string;
+    name: string;
+    status: string;
+    accountId: string;
+    scheduledAt: string | null;
+    createdAt: string;
+    stats: DispatchStats;
+  }[];
+  stats: DispatchStats;
+  contactCount: number;
+  uniqueContacts: number;
+  uniqueResponders: number;
+};
+export type ReplyEvent = {
+  accountId: string;
+  messageId: string;
+  campaignId: string;
+  recipientId: string;
+  receivedAt: string;
+  body: string;
+  type: string;
+  hasMedia: boolean;
+  attribution: string;
+};
+export type WorkspacePayload = {
+  campaigns: WorkspaceCampaign[];
+  lists: WorkspaceList[];
+  trackingSince: string;
+};
+export type DispatchDetail = Partial<Campaign> &
+  Partial<WorkspaceList> & {
+    id: string;
+    name: string;
+    status: string;
+    stats: DispatchStats;
+    recipients: Recipient[];
+    replies: ReplyEvent[];
+    contacts?: Contact[];
+  };
+export type State = {
+  contacts: Contact[];
+  lists: List[];
+  accounts: Account[];
+  campaigns: Campaign[];
+  attachments: Attachment[];
+  workspaces: WorkspaceBoard[];
+  replyTrackingSince: string;
+  settings: Settings;
+  system: { dataDir: string; version: string; platform: string };
+};
+export type Group = { id: string; name: string };
+export type ImportPreview = {
+  token: string;
+  filename: string;
+  total: number;
+  headers: string[];
+  rows: Record<string, string>[];
+  mapping: { phone: string; name: string; company: string };
+};
