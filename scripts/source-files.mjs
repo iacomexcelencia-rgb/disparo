@@ -10,6 +10,7 @@ const roots = [
   '.prettierignore',
   '.prettierrc.json',
   'CONTRIBUTING.md',
+  'CHANGELOG.md',
   'LICENSE',
   'README.md',
   'INICIAR.cmd',

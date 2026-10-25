@@ -1,10 +1,19 @@
 # Disparo
 
+[![Verificar projeto](https://github.com/iacomexcelencia-rgb/disparo/actions/workflows/ci.yml/badge.svg)](https://github.com/iacomexcelencia-rgb/disparo/actions/workflows/ci.yml)
+[![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-green)](LICENSE)
+
 Sua base, suas campanhas e cada resposta, em um aplicativo local para Windows.
 
 O Disparo conecta ao seu WhatsApp pelo QR code para organizar contatos, enviar textos e imagens, agendar campanhas e acompanhar resultados. Os dados ficam no seu computador.
 
 ![Workspace com campanhas de demonstração](docs/workspace-campanhas.jpg)
+
+## Novidades da versão 0.5.0
+
+Agora você pode **editar uma campanha antes do primeiro envio** e **excluir campanhas pelo modal**, tanto em Campanhas quanto no Workspace. Ajuste mensagem, destinatários, anexos e horário, mantendo o status atual. A exclusão pede confirmação e preserva os contatos e as mensagens que já estão no WhatsApp.
+
+Veja os detalhes no [histórico de versões](CHANGELOG.md) ou baixe o código na [Release 0.5.0](https://github.com/iacomexcelencia-rgb/disparo/releases/tag/v0.5.0).
 
 ## O que você encontra
 
@@ -35,6 +44,23 @@ npm start
 ```
 
 Abra **http://127.0.0.1:4317**. A primeira instalação pode levar alguns minutos para baixar as dependências.
+
+## Atualizar preservando seus dados
+
+1. Feche o Disparo e seu servidor local.
+2. Faça uma cópia da pasta de dados indicada em **Configurações**. Ao executar pelo código, o padrão é `.data/`.
+3. Se instalou com Git, atualize e recompile:
+
+```powershell
+git pull --ff-only
+npm ci
+npm run build
+npm run desktop
+```
+
+Se instalou pelo ZIP, extraia a nova versão em outra pasta, copie sua pasta `.data/` para essa nova instalação e execute os comandos de instalação. Se usa `DISPARO_DATA_DIR`, mantenha o mesmo caminho da base. Abra apenas uma instalação usando essa pasta de dados por vez.
+
+A versão 0.5.0 mantém o formato dos dados locais. Ao reabrir, confira a conexão do WhatsApp e as campanhas agendadas antes de retomar campanhas pausadas. O backup contém informações privadas e deve permanecer fora do repositório público.
 
 ## Primeira campanha
 
@@ -96,9 +122,10 @@ O serviço escuta somente na máquina local. O projeto não exige Vercel, Supaba
 npm run dev
 npm run check
 npm run test:ui
+npm run test:campaigns-ui
 ```
 
-`npm run check` confere a formatação, executa os testes e compila a interface. O teste visual usa 500 contatos fictícios e um transporte simulado; não envia mensagens reais.
+`npm run check` confere a formatação, executa os testes e compila a interface. `npm run test:ui` valida o Workspace com 500 contatos fictícios. `npm run test:campaigns-ui` confere edição, exclusão e persistência, incluindo a interface em tela pequena. Os testes visuais usam transporte simulado e não enviam mensagens reais.
 
 Para gerar o executável Windows:
 

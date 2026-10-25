@@ -24,9 +24,11 @@ npm run check
 npm run source:check
 ```
 
-Para alterações de interface, execute também `npm run test:ui`. Para alterações no pacote desktop, gere o executável e execute `npm run test:desktop` no Windows.
+Para alterações de interface, execute também `npm run test:ui`. Se a alteração envolver o modal, a composição ou o gerenciamento de campanhas, execute `npm run test:campaigns-ui`. Para alterações no pacote desktop, gere o executável e execute `npm run test:desktop` no Windows.
 
 Inclua na descrição da pull request o problema resolvido e os testes executados. Não envie bases de contatos, exportações, sessões do WhatsApp, QR codes ou credenciais em commits, capturas ou relatos públicos.
+
+Registre mudanças visíveis para o usuário em [CHANGELOG.md](CHANGELOG.md), incluindo as condições de uso e o impacto nos dados existentes. A versão de `package.json` e a do pacote raiz em `package-lock.json` devem permanecer iguais.
 
 ## Estrutura e publicação
 
