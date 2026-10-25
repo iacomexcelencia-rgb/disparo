@@ -3,7 +3,7 @@ import { contactFields, renderTemplate, analyzeTemplate } from './template.mjs';
 import { recordMessage, refreshDelivery } from './delivery.mjs';
 import { historicalMessageUsage } from './migrations.mjs';
 
-export function createCampaign(store, input) {
+function prepareCampaign(store, input) {
   const { data } = store;
   if (!data.accounts.some((account) => account.id === input.accountId))
     throw new Error('Selecione uma conta válida.');
@@ -78,11 +78,90 @@ export function createCampaign(store, input) {
       allContacts: input.allContacts,
       contactIds: [...input.contactIds],
       listIds: [...input.listIds],
+      groups: [...input.groups],
     },
   };
-  data.campaigns.unshift(campaign);
+  return campaign;
+}
+
+export function createCampaign(store, input) {
+  const campaign = prepareCampaign(store, input);
+  store.data.campaigns.unshift(campaign);
   store.save();
   return campaign;
+}
+
+export function campaignEditable(campaign) {
+  return (
+    ['draft', 'scheduled', 'paused'].includes(campaign.status) &&
+    campaign.recipients.every(
+      (recipient) => recipient.status === 'pending' && !recipient.attemptedAt,
+    )
+  );
+}
+
+export function updateCampaign(store, campaign, input, expectedRevision) {
+  if (!campaignEditable(campaign))
+    throw Object.assign(
+      new Error(
+        'Só é possível editar antes do primeiro envio. Use uma cópia para criar uma nova campanha.',
+      ),
+      { status: 409 },
+    );
+  if ((campaign.revision || 0) !== expectedRevision)
+    throw Object.assign(
+      new Error(
+        'A campanha foi alterada em outra janela. Reabra a edição para carregar a versão atual.',
+      ),
+      { status: 409 },
+    );
+  if (campaign.status === 'scheduled' && !input.scheduledAt)
+    throw new Error(
+      'Uma campanha agendada precisa de uma data futura. Pause a campanha para remover o agendamento.',
+    );
+  // Build and validate everything before touching the saved campaign.
+  const updated = prepareCampaign(store, input);
+  Object.assign(campaign, updated, {
+    id: campaign.id,
+    createdAt: campaign.createdAt,
+    approvedAt: campaign.approvedAt,
+    status: campaign.status,
+    revision: (campaign.revision || 0) + 1,
+    updatedAt: new Date().toISOString(),
+    error: null,
+  });
+  store.save();
+  return campaign;
+}
+
+export function deleteCampaign(store, campaign) {
+  if (campaign.recipients.some((recipient) => recipient.status === 'sending'))
+    throw Object.assign(
+      new Error(
+        'Há um envio em andamento. Pause a campanha e aguarde esse envio terminar antes de excluir.',
+      ),
+      { status: 409 },
+    );
+  const now = Date.now();
+  // Keep only the anonymous counters needed for the account's rolling 24-hour budget.
+  store.data.messageUsage = (store.data.messageUsage || []).filter(
+    (entry) => entry.at > now - 86400000,
+  );
+  for (const recipient of campaign.recipients) {
+    const at = Date.parse(recipient.attemptedAt || '');
+    if (at > now - 86400000 && recipient.status !== 'skipped')
+      store.data.messageUsage.push({
+        accountId: campaign.accountId,
+        at,
+        cost: recipient.messageCost || 1,
+      });
+  }
+  store.data.campaigns = store.data.campaigns.filter((item) => item.id !== campaign.id);
+  store.data.replyEvents = (store.data.replyEvents || []).filter(
+    (event) => event.campaignId !== campaign.id,
+  );
+  for (const board of store.data.workspaces || []) delete board.placements.campaigns[campaign.id];
+  store.save();
 }
 
 // Limits count actual outbound messages (text + each attachment), for each account.

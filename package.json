@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test:ui": "node tests/workspace-ui-smoke.mjs",
+    "test:campaigns-ui": "node tests/campaign-management-ui.mjs",
     "test:desktop": "node tests/desktop-smoke.mjs",
     "source:check": "node scripts/source-files.mjs",
     "source:export": "node scripts/export-source.mjs"

@@ -83,6 +83,8 @@ export type Campaign = {
   counts: Record<string, number>;
   total: number;
   stats?: DispatchStats;
+  revision?: number;
+  audience?: { allContacts: boolean; contactIds: string[]; listIds: string[]; groups?: Group[] };
 };
 export type CampaignDetail = Campaign & { recipients: Recipient[] };
 export type WorkspaceView = 'campaigns' | 'lists';

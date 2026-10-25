@@ -1542,6 +1542,12 @@ summary {
   gap: 24px;
   align-items: start;
 }
+.modal .composer-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+.modal .composer-layout .preview-column {
+  position: static;
+}
 .form-card {
   padding: 24px;
   margin-bottom: 20px;

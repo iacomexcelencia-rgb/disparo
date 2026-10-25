@@ -26,7 +26,9 @@ export function archiveRemovedModules(data) {
 }
 
 export function historicalMessageUsage(data, accountId) {
-  const usage = [];
+  const usage = (data.messageUsage || [])
+    .filter((entry) => entry.accountId === accountId)
+    .map(({ at, cost }) => ({ at, cost }));
   for (const conversation of data.legacyModules?.conversations || []) {
     if (conversation.accountId !== accountId) continue;
     for (const message of conversation.messages) {

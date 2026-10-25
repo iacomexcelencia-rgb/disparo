@@ -9,7 +9,7 @@ O Disparo conecta ao seu WhatsApp pelo QR code para organizar contatos, enviar t
 ## O que você encontra
 
 - **Visão geral:** base, campanhas e resultados dos envios.
-- **Campanhas:** mensagens personalizadas, até cinco anexos, agendamento, pausa, retomada e relatório CSV.
+- **Campanhas:** mensagens personalizadas, até cinco anexos, agendamento, edição antes do primeiro envio, exclusão, pausa, retomada e relatório CSV.
 - **Contatos e listas:** cadastro, edição e importação de Excel, CSV e vCard, combinando telefones repetidos.
 - **Workspace:** Kanban por campanha ou por lista, colunas configuráveis e cards com detalhes dos envios e respostas.
 - **WhatsApp:** conexão por QR code e sessão salva localmente.
@@ -71,6 +71,10 @@ Escolha **Por campanha** ou **Por lista**. Os cards acompanham o status real e a
 As colunas de fábrica são **Rascunho / sem campanha**, **Agendada**, **Em andamento**, **Pausada**, **Concluída** e **Cancelada**. Você pode renomear, reordenar, adicionar colunas e criar outros workspaces. Arrastar um card organiza o quadro sem alterar os envios; quando o status real muda, ele volta a acompanhar a coluna correspondente.
 
 O aplicativo registra respostas recebidas pela sessão conectada, contando cada pessoa uma vez por campanha. Uma resposta citando a mensagem original pertence àquela campanha; sem citação, ela é associada ao último envio tentado para o mesmo contato pela mesma conta. Cada resposta pertence a apenas uma campanha.
+
+No modal da campanha, em **Campanhas** ou no **Workspace**, use **Editar campanha** para alterar nome, conta, destinatários, mensagem, anexos, horário e limites antes do primeiro envio. A edição mantém o status atual: uma campanha agendada continua agendada; um rascunho ou uma campanha pausada não começa a enviar ao salvar. Para retirar o agendamento de uma campanha já aprovada, pause-a primeiro.
+
+**Excluir campanha** pede confirmação e remove seus resultados e respostas dos relatórios, preservando os contatos e as mensagens que já estão no WhatsApp. Um envio em andamento precisa terminar antes da exclusão. Os envios das últimas 24 horas continuam contando para os limites da conta, mesmo depois de excluir a campanha.
 
 **Exemplo:** 500 destinatários com envio confirmado e 150 respondentes resultam em **150 responderam**, **350 sem resposta registrada** e **30% de resposta**. Quem ainda está na fila não entra como alguém que nunca respondeu. Grupos ficam fora da taxa de resposta.
 

@@ -1,8 +1,11 @@
 import { campaignSchema } from '../schemas.mjs';
 import { requireItem } from '../http.mjs';
-import { createCampaign } from '../campaigns.mjs';
+import { createCampaign, updateCampaign, deleteCampaign } from '../campaigns.mjs';
 import { campaignSummary } from '../stats.mjs';
 import { csvEncode } from '../importer.mjs';
+import { z } from 'zod';
+
+const editSchema = campaignSchema.extend({ expectedRevision: z.number().int().min(0) });
 
 export function installCampaignRoutes(api, { store, whatsapp, groupCache }) {
   api.post('/campaigns', (request, response) => {
@@ -19,6 +22,29 @@ export function installCampaignRoutes(api, { store, whatsapp, groupCache }) {
   api.get('/campaigns/:id', (request, response) =>
     response.json(requireItem(store.data.campaigns, request.params.id, 'Campanha')),
   );
+  api.put('/campaigns/:id', (request, response) => {
+    const campaign = requireItem(store.data.campaigns, request.params.id, 'Campanha');
+    const input = editSchema.parse(request.body);
+    if (
+      input.groups.some(
+        (group) =>
+          !(groupCache.get(input.accountId) || []).some((known) => known.id === group.id) &&
+          !(
+            campaign.accountId === input.accountId &&
+            campaign.recipients.some(
+              (recipient) => recipient.type === 'group' && recipient.address === group.id,
+            )
+          ),
+      )
+    )
+      throw new Error('Atualize os grupos da conta antes de selecionar.');
+    response.json(updateCampaign(store, campaign, input, input.expectedRevision));
+  });
+  api.delete('/campaigns/:id', (request, response) => {
+    const campaign = requireItem(store.data.campaigns, request.params.id, 'Campanha');
+    deleteCampaign(store, campaign);
+    response.json({ ok: true });
+  });
   api.post('/campaigns/:id/:action', (request, response) => {
     const campaign = requireItem(store.data.campaigns, request.params.id, 'Campanha');
     if (request.params.action === 'approve') {
